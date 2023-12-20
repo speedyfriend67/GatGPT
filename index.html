@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Search</title>
+</head>
+<body>
+
+  <h1>Google Search</h1>
+
+  <label for="searchInput">Enter your query:</label>
+  <input type="text" id="searchInput">
+  <button onclick="performGoogleSearch()">Search</button>
+
+  <div id="searchResults"></div>
+
+  <script>
+    async function searchGoogle(query) {
+      try {
+        const response = await fetch(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const firstResult = doc.querySelector('div.BNeawe.iBp4i.AP7Wnd').textContent;
+
+        return firstResult;
+      } catch (error) {
+        console.error('Error fetching Google search results:', error.message);
+        return 'Error fetching results.';
+      }
+    }
+
+    function performGoogleSearch() {
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+
+      const userQuery = searchInput.value.trim();
+      if (userQuery === '') {
+        searchResults.textContent = 'Please enter a valid query.';
+        return;
+      }
+
+      searchGoogle(userQuery).then(answer => {
+        searchResults.textContent = answer;
+      });
+    }
+  </script>
+
+</body>
+</html>
